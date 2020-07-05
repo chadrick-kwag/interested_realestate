@@ -1,0 +1,14 @@
+
+
+.listview-container {
+    display: flex;
+    flex-direction: column;
+    width: 100vh;
+}
+
+.listview-header {
+    display: flex;
+    flex-direction: row;
+    background-color: gray;
+    color: white;
+}
