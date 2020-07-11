@@ -10,13 +10,16 @@ import { Button, Form } from 'react-bootstrap'
 import { RenderAfterNavermapsLoaded, NaverMap, Marker } from 'react-naver-maps';
 
 
+const geo_url = 'http://localhost:3000/api/geo'
+const default_longitutde = 126.970833
+const default_latitude = 37.554722
+
 class SubNaverMap extends React.Component {
 
     constructor(props) {
         super(props)
 
-        const default_longitutde = 126.970833
-        const default_latitude = 37.554722
+
         this.state = {
             zoomlevel: 13,
             longitude: this.props.longitude == null ? default_longitutde : this.props.longitude,
@@ -24,9 +27,13 @@ class SubNaverMap extends React.Component {
         }
     }
 
+    
+
     render() {
 
         const navermaps = window.naver.maps
+
+        console.log('rendering subnavermap')
 
         return <NaverMap
             mapDivId={'maps-getting-started-uncontrolled'} // default: react-naver-map
@@ -34,16 +41,21 @@ class SubNaverMap extends React.Component {
                 width: '100%', // 네이버지도 가로 길이
                 height: '85vh' // 네이버지도 세로 길이
             }}
-            defaultCenter={{ lat: this.state.latitude, lng: this.state.longitude }} // 지도 초기 위치
+            center={{ lat: this.props.latitude == null ? default_latitude : this.props.latitude, lng: this.props.longitude == null ? default_longitutde : this.props.longitude }} // 지도 초기 위치
+            
             defaultZoom={this.state.zoomlevel} // 지도 초기 확대 배율
         >
-            <Marker
+
+            {
+                (this.props.latitude!=null && this.props.longitude !=null )? <Marker
                 key={1}
-                position={new navermaps.LatLng(37.551229, 126.988205)}
+                position={new navermaps.LatLng(this.props.latitude, this.props.longitude)}
                 onClick={
                     () => alert('this is seoul tower')
                 }
-            />
+            /> : null
+            }
+            
         </NaverMap>
     }
 }
@@ -54,60 +66,27 @@ class RegisterNaverMap extends React.Component {
     constructor(props) {
         super(props)
 
-        this.get_location_from_address = this.get_location_from_address.bind(this)
 
         this.state = {
-            address: this.props.address,
+            
             longitude: this.props.longitude,
             latitude: this.props.latitude
         }
 
     }
 
-
-    get_location_from_address(callback) {
-
-        if (this.props.address == null) {
-            console.log('address is null')
-            return
+    shouldComponentUpdate(nextprops, nextstate){
+        if(this.props.longitude == nextprops.longitude && this.props.latitude == nextprops.latitude){
+            return false
         }
 
-        fetch('https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=' + this.props.address, {
-            headers: {
-                "X-NCP-APIGW-API-KEY-ID": "bz0k7065a0",
-                "X-NCP-APIGW-API-KEY": "hh75tiXOGrIdpc7FQZIN7woY5j7w0SrbkDcqPWZm"
-            }
-        }).then(d => d.json())
-            .then(d => {
-                console.log(d)
-                if (d.addresses.length == 0) {
-                    console.log("no result received")
-                    return
-                }
-
-                let location_longitude = d.addresses[0].x
-                let location_latitude = d.addresses[0].y
-
-                console.log("location_longitude: " + location_longitude + ", location_latitude=" + location_latitude)
-
-
-                this.setState({
-                    longitude: location_longitude,
-                    latitude: location_latitude
-                })
-
-
-                if (callback) {
-                    callback()
-                }
-            })
-
+        return true
     }
 
 
     render() {
 
-
+        console.log('rendering navermaps')
 
         return <RenderAfterNavermapsLoaded
             ncpClientId={'bz0k7065a0'} // 자신의 네이버 계정에서 발급받은 Client ID
@@ -168,23 +147,28 @@ class AddressPositionSearch extends React.Component {
             return
         }
 
-        fetch('https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=' + new_address, {
+        console.log(new_address)
+
+        let sendjson = JSON.stringify({
+            address: new_address
+        })
+
+        console.log(sendjson)
+
+        fetch(geo_url, {
+            method: 'POST',
+            body: sendjson,
             headers: {
-                "X-NCP-APIGW-API-KEY-ID": "bz0k7065a0",
-                "X-NCP-APIGW-API-KEY": "hh75tiXOGrIdpc7FQZIN7woY5j7w0SrbkDcqPWZm"
-                
-                
+                'Content-Type': 'application/json'
             }
         }).then(d => d.json())
             .then(d => {
-                console.log(d)
-                if (d.addresses.length == 0) {
-                    console.log("no result received")
-                    return
-                }
 
-                let location_longitude = d.addresses[0].x
-                let location_latitude = d.addresses[0].y
+                console.log(d)
+
+
+                let location_longitude = d.longitude
+                let location_latitude = d.latitude
 
                 console.log("location_longitude: " + location_longitude + ", location_latitude=" + location_latitude)
 
@@ -215,7 +199,7 @@ class AddressPositionSearch extends React.Component {
                     {this.state.address_search_results.length == 0 ? <span>no results</span> :
                         <table>
                             {this.state.address_search_results.map(d => <tr onClick={e => {
-                                
+
                                 this.get_location_from_address(d)
                             }
 

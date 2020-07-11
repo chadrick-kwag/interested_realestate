@@ -10,7 +10,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.19.2",
+    "body-parser": "^1.19.0",
     "bootstrap": "^4.5.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
     "react-bootstrap": "^1.0.1",
     "react-naver-maps": "0.0.13",
     "react-router-dom": "^5.2.0"
