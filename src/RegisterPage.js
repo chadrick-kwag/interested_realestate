@@ -175,10 +175,16 @@ class AddressPositionSearch extends React.Component {
 
                 let new_search_list = []
 
+                if(d.results.errorMessage){
+                    console.log(d.results.errorMessage)
+                    return
+                }
+
                 d.results.juso.map(i => new_search_list.push(i.roadAddr))
 
                 this.setState({ address_search_results: new_search_list })
             })
+            .catch(e=>console.log(e))
     }
 
 
@@ -218,7 +224,9 @@ class AddressPositionSearch extends React.Component {
                 this.setState({
                     selected_search_address: new_address,
                     longitude: location_longitude,
-                    latitude: location_latitude
+                    latitude: location_latitude,
+                    map_center_lat: location_latitude,
+                    map_center_lng: location_longitude
                 })
 
 
@@ -230,13 +238,47 @@ class AddressPositionSearch extends React.Component {
 
         console.log("custom_marker_rightclick_callback triggered")
 
-        this.setState({
-            map_center_lat: lat,
-            map_center_lng: lng,
-            custom_marker_lat: lat,
-            custom_marker_lng: lng
+        // fetch address of custom location
+
+        let sendjson = {
+            coords : lng+","+ lat
+        }
+
+        console.log(sendjson)
+
+        fetch('http://localhost:3000/api/reversegeo',{
+            method: 'POST',
+            body: JSON.stringify(sendjson),
+            headers:{
+                "Content-Type": "application/json"
+            }
+        }).then(d=>d.json())
+        .then(d=>{
+            if(!d.success){
+                console.log('fetch fail msg=' + d.msg)
+                return
+            }
+
+            let roadaddr = d.roadaddr
+
+            this.setState({
+                map_center_lat: lat,
+                map_center_lng: lng,
+                custom_marker_lat: lat,
+                custom_marker_lng: lng,
+                selected_search_address: roadaddr
+    
+            })
+
 
         })
+        .catch(e=>{
+            console.log(e)
+
+        })
+
+
+        
     }
 
 
