@@ -21,13 +21,29 @@ class SubNaverMap extends React.Component {
 
 
         this.state = {
-            zoomlevel: 13,
+            zoomlevel: 15,
             longitude: this.props.longitude == null ? default_longitutde : this.props.longitude,
-            latitude: this.props.latitude == null ? default_latitude : this.props.latitude
+            latitude: this.props.latitude == null ? default_latitude : this.props.latitude,
+
+
         }
+
+        this.rightclick_callback = this.rightclick_callback.bind(this)
     }
 
-    
+    rightclick_callback(e) {
+        console.log(e)
+
+
+        let lat = e.latlng._lat
+        let lng = e.latlng._lng
+
+
+        this.props.updateCustomMarkerCallback(lat, lng)
+
+    }
+
+
 
     render() {
 
@@ -35,27 +51,41 @@ class SubNaverMap extends React.Component {
 
         console.log('rendering subnavermap')
 
+        console.log(this.props)
+
         return <NaverMap
             mapDivId={'maps-getting-started-uncontrolled'} // default: react-naver-map
             style={{
-                width: '100%', // 네이버지도 가로 길이
-                height: '85vh' // 네이버지도 세로 길이
+                width: '50%', // 네이버지도 가로 길이
+                height: '30vh' // 네이버지도 세로 길이
             }}
-            center={{ lat: this.props.latitude == null ? default_latitude : this.props.latitude, lng: this.props.longitude == null ? default_longitutde : this.props.longitude }} // 지도 초기 위치
-            
+            center={{ lat: this.props.map_center_lat == null ? default_latitude : this.props.map_center_lat, lng: this.props.map_center_lng == null ? default_longitutde : this.props.map_center_lng }} // 지도 초기 위치
+
+            onRightclick={e => this.rightclick_callback(e)}
+
             defaultZoom={this.state.zoomlevel} // 지도 초기 확대 배율
         >
 
             {
-                (this.props.latitude!=null && this.props.longitude !=null )? <Marker
-                key={1}
-                position={new navermaps.LatLng(this.props.latitude, this.props.longitude)}
-                onClick={
-                    () => alert('this is seoul tower')
-                }
-            /> : null
+                (this.props.latitude != null && this.props.longitude != null) ?
+                    <Marker
+                        key={1}
+                        position={new navermaps.LatLng(this.props.latitude, this.props.longitude)}
+                        onClick={
+                            () => alert('this is seoul tower')
+                        }
+                    /> : null
             }
-            
+
+            {
+                (this.props.custom_marker_lat!=null & this.props.custom_marker_lng!=null) ?
+                <Marker
+                key="2"
+                position={new navermaps.LatLng(this.props.custom_marker_lat, this.props.custom_marker_lng)}
+
+                /> : null
+            }
+
         </NaverMap>
     }
 }
@@ -68,15 +98,20 @@ class RegisterNaverMap extends React.Component {
 
 
         this.state = {
-            
+
             longitude: this.props.longitude,
             latitude: this.props.latitude
         }
 
     }
 
-    shouldComponentUpdate(nextprops, nextstate){
-        if(this.props.longitude == nextprops.longitude && this.props.latitude == nextprops.latitude){
+    shouldComponentUpdate(nextprops, nextstate) {
+        if (this.props.longitude == nextprops.longitude && this.props.latitude == nextprops.latitude
+            && this.props.map_center_lat == nextprops.map_center_lat
+            && this.props.map_center_lng == nextprops.map_center_lng
+            && this.props.custom_marker_lat == nextprops.custom_marker_lat
+            && this.props.custom_marker_lng == nextprops.custom_marker_lng
+            && this.props.updateCustomMarkerCallback == nextprops.updateCustomMarkerCallback) {
             return false
         }
 
@@ -93,7 +128,7 @@ class RegisterNaverMap extends React.Component {
             error={<p>Maps Load Error</p>}
             loading={<p>Maps Loading...</p>}
         >
-            <SubNaverMap longitude={this.props.longitude} latitude={this.props.latitude} />
+            <SubNaverMap {...this.props}/>
         </RenderAfterNavermapsLoaded>
     }
 }
@@ -110,12 +145,19 @@ class AddressPositionSearch extends React.Component {
             address_search_results: [],
             selected_search_address: null,
             longitude: null,
-            latitude: null
+            latitude: null,
+            show_search_by_address_area: false,
+            map_center_lat: null,
+            map_center_lng: null,
+            custom_marker_lat: null,
+            custom_marker_lng: null
+
         }
 
 
         this.attempt_address_search = this.attempt_address_search.bind(this)
         this.get_location_from_address = this.get_location_from_address.bind(this)
+        this.custom_marker_rightclick_callback = this.custom_marker_rightclick_callback.bind(this)
 
     }
 
@@ -184,6 +226,19 @@ class AddressPositionSearch extends React.Component {
 
     }
 
+    custom_marker_rightclick_callback(lat, lng){
+
+        console.log("custom_marker_rightclick_callback triggered")
+
+        this.setState({
+            map_center_lat: lat,
+            map_center_lng: lng,
+            custom_marker_lat: lat,
+            custom_marker_lng: lng
+
+        })
+    }
+
 
     render() {
         return (
@@ -192,24 +247,39 @@ class AddressPositionSearch extends React.Component {
 
 
                 <span>address</span>
-                <input type="text" value={this.state.address} onChange={e => this.setState({ address: e.target.value })}></input>
-                <button onClick={e => this.attempt_address_search()}>search</button>
+                <input type="text" style={{ width: "70%" }} value={this.state.selected_search_address} disabled />
+                <Button onClick={e => this.setState({
+                    show_search_by_address_area: true
+                })}>주소검색</Button>
 
-                <div style={{ display: "flex", flexDirection: "row" }}>
-                    {this.state.address_search_results.length == 0 ? <span>no results</span> :
-                        <table>
-                            {this.state.address_search_results.map(d => <tr onClick={e => {
+                {
+                    this.state.show_search_by_address_area ?
+                        <div>
+                            <span>검색주소</span>
+                            <input type="text" value={this.state.address} onChange={e => this.setState({ address: e.target.value })}></input>
+                            <button onClick={e => this.attempt_address_search()}>search</button>
 
-                                this.get_location_from_address(d)
-                            }
+                            <div style={{ display: "flex", flexDirection: "row" }}>
+                                {this.state.address_search_results.length == 0 ? <span>no results</span> :
+                                    <table>
+                                        {this.state.address_search_results.map(d => <tr onClick={e => {
 
-                            }>{d}</tr>)}
-                        </table>}
+                                            this.get_location_from_address(d)
+                                        }
+
+                                        }>{d}</tr>)}
+                                    </table>}
 
 
-                </div>
+                            </div>
+                        </div> : null
+                }
 
-                <RegisterNaverMap longitude={this.state.longitude} latitude={this.state.latitude}></RegisterNaverMap>
+
+                <RegisterNaverMap longitude={this.state.longitude} latitude={this.state.latitude} map_center_lat={this.state.map_center_lat} map_center_lng={this.state.map_center_lng} updateCustomMarkerCallback={this.custom_marker_rightclick_callback}
+                custom_marker_lng={this.state.custom_marker_lng}
+                custom_marker_lat = {this.state.custom_marker_lat}
+                ></RegisterNaverMap>
 
 
             </div>
