@@ -5,7 +5,7 @@ import { RenderAfterNavermapsLoaded, NaverMap, Marker } from 'react-naver-maps';
 import ListView from './ListView'
 import TopNavBar from './TopNavBar'
 import MapView from './MapView'
-import RegisterPage from './RegisterPage'
+import RegisterPage from './registerpage/RegisterPage'
 
 import RealEstate, {house_type} from './RealEstate'
 
