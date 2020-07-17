@@ -13,10 +13,10 @@ class AddressPositionSearch extends React.Component {
         super(props)
 
         this.state = {
-            address: this.props.address,
+            // address: this.props.address,
             position: this.props.position,
             address_search_results: [],
-            selected_search_address: null,
+            // selected_search_address: null,
             longitude: null,
             latitude: null,
             show_search_by_address_area: false,
@@ -35,11 +35,11 @@ class AddressPositionSearch extends React.Component {
     }
 
     attempt_address_search() {
-        if (this.state.address === null || this.state.address == "") {
+        if (this.props.address === null || this.props.address == "") {
             return
         }
 
-        let fetch_url = 'http://www.juso.go.kr/addrlink/addrLinkApi.do' + '?confmKey=' + "devU01TX0FVVEgyMDIwMDcwNjAxMzIyMTEwOTkyNzI=" + "&currentPage=1&countPerPage=10&keyword=" + this.state.address + "&resultType=json"
+        let fetch_url = 'http://www.juso.go.kr/addrlink/addrLinkApi.do' + '?confmKey=' + "devU01TX0FVVEgyMDIwMDcwNjAxMzIyMTEwOTkyNzI=" + "&currentPage=1&countPerPage=10&keyword=" + this.props.address + "&resultType=json"
 
 
         fetch(fetch_url).then(d => d.json())
@@ -95,12 +95,14 @@ class AddressPositionSearch extends React.Component {
 
 
                 this.setState({
-                    selected_search_address: new_address,
+                    // selected_search_address: new_address,
                     longitude: location_longitude,
                     latitude: location_latitude,
                     map_center_lat: location_latitude,
                     map_center_lng: location_longitude
                 })
+
+                this.props.updateAddress(new_address)
 
 
             })
@@ -138,10 +140,12 @@ class AddressPositionSearch extends React.Component {
                 map_center_lat: lat,
                 map_center_lng: lng,
                 custom_marker_lat: lat,
-                custom_marker_lng: lng,
-                selected_search_address: roadaddr
+                custom_marker_lng: lng
+                // selected_search_address: roadaddr
     
             })
+
+            this.props.updateAddress(roadaddr)
 
 
         })
@@ -162,7 +166,7 @@ class AddressPositionSearch extends React.Component {
 
 
                 <span>address</span>
-                <input type="text" style={{ width: "70%" }} value={this.state.selected_search_address} disabled />
+                <input type="text" style={{ width: "70%" }} value={this.props.address} disabled />
                 <Button onClick={e => this.setState({
                     show_search_by_address_area: true
                 })}>주소검색</Button>
@@ -171,7 +175,7 @@ class AddressPositionSearch extends React.Component {
                     this.state.show_search_by_address_area ?
                         <div>
                             <span>검색주소</span>
-                            <input type="text" value={this.state.address} onChange={e => this.setState({ address: e.target.value })}></input>
+                            <input type="text" value={this.props.address} onChange={this.props.updateAddress(e.target.value)}></input>
                             <button onClick={e => this.attempt_address_search()}>search</button>
 
                             <div style={{ display: "flex", flexDirection: "row" }}>

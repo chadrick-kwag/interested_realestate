@@ -5,6 +5,15 @@ import { Button, Form } from 'react-bootstrap'
 import {numToKorean} from 'num-to-korean'
 
 
+function price_text_to_num(price_text){
+    let t = price_text.trim()
+    t = t.replace(/,/g,'')
+
+
+    return t
+}
+
+
 class PriceInput extends React.Component {
 
 
@@ -17,16 +26,16 @@ class PriceInput extends React.Component {
     }
 
 
-    price_text_to_num(price_text){
-        let t = price_text.trim()
-        t = t.replace(/,/g,'')
+    // price_text_to_num(price_text){
+    //     let t = price_text.trim()
+    //     t = t.replace(/,/g,'')
 
 
-        return t
-    }
+    //     return t
+    // }
 
     price_text_to_kor_text(price_text){
-        let num = this.price_text_to_num(price_text)
+        let num = price_text_to_num(price_text)
 
 
     }
@@ -49,7 +58,7 @@ class PriceInput extends React.Component {
 
     update_price_text(new_text) {
 
-        let num_text = this.price_text_to_num(new_text)
+        let num_text = price_text_to_num(new_text)
 
 
         let converted_text = this.num_to_price_text(num_text)
@@ -62,7 +71,7 @@ class PriceInput extends React.Component {
     parse_price_text_to_kor_text(price_text) {
 
 
-        let num_text = this.price_text_to_num(price_text)
+        let num_text = price_text_to_num(price_text)
 
 
         let kor_text = numToKorean(Number(num_text))
@@ -98,3 +107,4 @@ class PriceInput extends React.Component {
 }
 
 export default PriceInput
+export {price_text_to_num}
