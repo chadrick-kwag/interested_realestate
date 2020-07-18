@@ -80,7 +80,7 @@ class RegisterPage extends React.Component {
         let price = price_text_to_num(this.state.price_text)
         console.log("submit price: " + price)
 
-        let rs = new RealEstate(this.state._house_type, price, this.state.address, this.state.position, this.state.commute_time, this.state.area)
+        let rs = new RealEstate(this.state._house_type, price, this.state.address, this.state.position, this.state.commute_time, this.state.area_text)
 
 
         let result = this.props.submitCallback(rs)
