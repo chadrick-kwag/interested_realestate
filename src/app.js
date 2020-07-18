@@ -25,19 +25,39 @@ class App extends React.Component {
         this.state = {
             viewmode: "listview",
             data: [
-                // {
-                //     address: "서울 강남구",
-                //     price: 90000000,
-                //     area: 98,
-                //     commute_time: 40
-
-                // }
-                new RealEstate(house_type.BUY, 90000000, "서울 강남구", null, 40, 98)
+                new RealEstate(house_type.BUY, 90000000, "서울 강남구", null, 40, 98),
+                new RealEstate(house_type.CHUNGYAK, 80000000, "서울 캉남구", null, 30, 58)
             ]
         }
 
         this.submitData = this.submitData.bind(this)
         this.toggleViewMode = this.toggleViewMode.bind(this)
+        this.sort_data_by_key = this.sort_data_by_key.bind(this)
+    }
+
+    sort_data_by_key(key, is_ascending){
+
+        console.log("inside sort_data_by_key, key=" + key  + ", is_ascending: " + is_ascending)
+        let data_list = this.state.data
+
+        console.log("before sorting")
+        console.log(data_list)
+
+        data_list.sort((a,b)=>{
+            if(a[key] < b[key]){
+                return is_ascending? -1: 1;
+            }
+            else{
+                return is_ascending? 1:-1;
+            }
+        })
+
+        console.log("after sorting")
+        console.log(data_list)
+
+        this.setState({
+            data: data_list
+        })
     }
 
 
@@ -83,10 +103,10 @@ class App extends React.Component {
                         <Route path='/register'>
                             <RegisterPage submitCallback={this.submitData}/>
                         </Route>
-                        <Route path='/'>
+                        <Route path='/'>v
 
 
-                            {this.state.viewmode == "listview" ? <ListView data={this.state.data} /> : null}
+                            {this.state.viewmode == "listview" ? <ListView data={this.state.data} sort_by_key={this.sort_data_by_key}/> : null}
                             {this.state.viewmode == "mapview" ? <MapView data={this.state.data} /> : null}
                         </Route>
 

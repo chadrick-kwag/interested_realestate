@@ -23,7 +23,6 @@ class RegisterPage extends React.Component {
         this.state = {
             _house_type: null,
             address: "",
-            // price: "",
             area: "",
             commute_time: "",
             position: null,
