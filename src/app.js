@@ -103,7 +103,7 @@ class App extends React.Component {
                         <Route path='/register'>
                             <RegisterPage submitCallback={this.submitData}/>
                         </Route>
-                        <Route path='/'>v
+                        <Route path='/'>
 
 
                             {this.state.viewmode == "listview" ? <ListView data={this.state.data} sort_by_key={this.sort_data_by_key}/> : null}

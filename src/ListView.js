@@ -32,6 +32,7 @@ class ListView extends React.Component {
 
         this.update_processed_ascending_options = this.update_processed_ascending_options.bind(this)
         this.get_new_toggled_new_val_for_ascending_option = this.get_new_toggled_new_val_for_ascending_option.bind(this)
+        this.get_ascending_icon_for_type = this.get_ascending_icon_for_type.bind(this)
 
     }
 
@@ -53,6 +54,20 @@ class ListView extends React.Component {
             ascending_options: new_ao
         })
 
+    }
+
+    get_ascending_icon_for_type(key){
+        if(this.state.ascending_options[key]==null){
+            return null
+        }
+        else{
+            if(this.state.ascending_options[key]==true){
+                return '△'
+            }
+            else{
+                return '▽'
+            }
+        }
     }
 
 
@@ -88,7 +103,7 @@ class ListView extends React.Component {
                         this.update_processed_ascending_options("address", newval)
 
                         this.props.sort_by_key("address", newval)
-                    }}>주소</Button></th>
+                    }}>주소{this.get_ascending_icon_for_type("address")}</Button></th>
                     <th><Button onClick={e => {
                         let newval = this.get_new_toggled_new_val_for_ascending_option("price")
 
@@ -97,21 +112,21 @@ class ListView extends React.Component {
                         this.props.sort_by_key("price", newval)
 
 
-                    }}>가격</Button></th>
+                    }}>가격{this.get_ascending_icon_for_type("price")}</Button></th>
                     <th><Button onClick={e => {
                         let newval = this.get_new_toggled_new_val_for_ascending_option("area")
 
                         this.update_processed_ascending_options("area", newval)
 
                         this.props.sort_by_key("area", newval)
-                    }}>면적</Button></th>
+                    }}>면적{this.get_ascending_icon_for_type("area")}</Button></th>
                     <th><Button onClick={e => {
                         let newval = this.get_new_toggled_new_val_for_ascending_option("house_type")
 
                         this.update_processed_ascending_options("house_type", newval)
 
                         this.props.sort_by_key("house_type", newval)
-                    }}>타입</Button></th>
+                    }}>타입{this.get_ascending_icon_for_type("house_type")}</Button></th>
                     <th><Button onClick={
                         e => {
                             let newval = this.get_new_toggled_new_val_for_ascending_option("commute_time")
@@ -120,7 +135,7 @@ class ListView extends React.Component {
 
                             this.props.sort_by_key("commute_time", newval)
                         }
-                    }>출퇴근소요시간</Button></th>
+                    }>출퇴근소요시간{this.get_ascending_icon_for_type("commute_time")}</Button></th>
                 </thead>
                 <tbody>
                     {this.props.data.map(d =>

@@ -1,5 +1,6 @@
 import React from 'react'
 import {withRouter} from 'react-router'
+import {Button} from 'react-bootstrap'
 
 class TopNavBar extends React.Component {
 
@@ -9,8 +10,8 @@ class TopNavBar extends React.Component {
         return (
             <div >
 
-                <button onClick={e=>this.props.history.push('/register')}>register</button>
-                <button onClick={e => this.props.toggleCallback()}>change</button>
+                <Button onClick={e=>this.props.history.push('/register')}>register</Button>
+                <Button onClick={e => this.props.toggleCallback()}>change</Button>
 
 
             </div>
