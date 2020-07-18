@@ -17,8 +17,7 @@ class TopNavBar extends React.Component {
                 flexDirection: "row"
             }}>
 
-                <Button onClick={e=>this.props.history.push('/register')}>register</Button>
-                {/* <Button onClick={e => this.props.toggleCallback()}>change</Button> */}
+                <Button onClick={e=>this.props.history.push('/register')}>매물추가</Button>
                 <div style={{
                     
                     backgroundImage: "url(./"+change_icon_path+")",
@@ -29,10 +28,6 @@ class TopNavBar extends React.Component {
                 }} 
                 onClick={e=>this.props.toggleCallback()}
                 />
-
-                
-                
-
 
             </div>
         )

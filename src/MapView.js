@@ -1,12 +1,6 @@
 import React from 'react'
 import { RenderAfterNavermapsLoaded, NaverMap, Marker } from 'react-naver-maps'
 
-// function NaverMapAPI(props) {
-
-//     const navermaps = window.naver.maps
-    
-// }
-
 
 
 class RealNaverMap extends React.Component{

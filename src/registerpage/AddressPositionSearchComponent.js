@@ -95,14 +95,13 @@ class AddressPositionSearch extends React.Component {
 
 
                 this.setState({
-                    // selected_search_address: new_address,
                     longitude: location_longitude,
                     latitude: location_latitude,
                     map_center_lat: location_latitude,
                     map_center_lng: location_longitude
                 })
 
-                this.props.updateAddress(new_address)
+                this.props.updateAddress(new_address, location_latitude, location_longitude)
 
 
             })
@@ -145,7 +144,7 @@ class AddressPositionSearch extends React.Component {
     
             })
 
-            this.props.updateAddress(roadaddr)
+            this.props.updateAddress(roadaddr, lat, lng)
 
 
         })
@@ -175,7 +174,7 @@ class AddressPositionSearch extends React.Component {
                     this.state.show_search_by_address_area ?
                         <div>
                             <span>검색주소</span>
-                            <input type="text" value={this.props.address} onChange={this.props.updateAddress(e.target.value)}></input>
+                            <input type="text" value={this.props.address} onChange={e=>this.props.updateAddress(e.target.value)}></input>
                             <button onClick={e => this.attempt_address_search()}>search</button>
 
                             <div style={{ display: "flex", flexDirection: "row" }}>

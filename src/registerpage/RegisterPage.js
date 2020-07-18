@@ -28,6 +28,8 @@ class RegisterPage extends React.Component {
             position: null,
             price_text: "",
             area_text: "",
+            latitude: null,
+            longitude: null,
             is_area_unit_metric: true
         }
 
@@ -76,10 +78,15 @@ class RegisterPage extends React.Component {
             return
         }
 
+        if(this.state.longitude==null || this.state.latitude==null){
+            alert('invalid position info')
+            return
+        }
+
         let price = price_text_to_num(this.state.price_text)
         console.log("submit price: " + price)
 
-        let rs = new RealEstate(this.state._house_type, price, this.state.address, this.state.position, this.state.commute_time, this.state.area_text)
+        let rs = new RealEstate(this.state._house_type, price, this.state.address, this.state.latitude, this.state.longitude, this.state.commute_time, this.state.area_text)
 
 
         let result = this.props.submitCallback(rs)
@@ -115,9 +122,12 @@ class RegisterPage extends React.Component {
                         <Button variant={this.state._house_type == house_type.CHUNGYAK ? "warning" : "light"} onClick={e => this.setState({ _house_type: house_type.CHUNGYAK })}>청약</Button>
                     </div>
                 </div>
-                <AddressPositionSearch updateAddress={(val) => {
-                    console.log("updating address: " + val)
-                    this.setState({ address: val })
+                <AddressPositionSearch updateAddress={(addr, lat,lng) => {
+                    // console.log("updating address: " + a)
+                    this.setState({ address: addr,
+                        latitude: lat,
+                        longitude: lng
+                     })
 
                 }} address={this.state.address} />
                 <div>
