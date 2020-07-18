@@ -5,6 +5,13 @@ import { Button, Form } from 'react-bootstrap'
 import {numToKorean} from 'num-to-korean'
 
 
+function price_num_to_kor_text_cut_at_uk(price_num){
+    let uk_unit_num = Number(price_num) / 100000000
+    
+    return uk_unit_num
+
+}
+
 function price_text_to_num(price_text){
     let t = price_text.trim()
     t = t.replace(/,/g,'')
@@ -108,4 +115,4 @@ class PriceInput extends React.Component {
 }
 
 export default PriceInput
-export {price_text_to_num, parse_price_text_to_kor_text}
+export {price_text_to_num, parse_price_text_to_kor_text, price_num_to_kor_text_cut_at_uk}

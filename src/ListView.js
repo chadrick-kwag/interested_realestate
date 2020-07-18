@@ -3,6 +3,7 @@ import './ListView.css'
 
 import { Table, Button } from 'react-bootstrap'
 import { house_type_kor_text } from './RealEstate'
+import {price_num_to_kor_text_cut_at_uk} from './registerpage/PriceInput'
 
 
 
@@ -143,10 +144,10 @@ class ListView extends React.Component {
                         
                         return <tr >
                             <td>{d.address}</td>
-                            <td>{d.price}</td>
+                            <td>{price_num_to_kor_text_cut_at_uk(d.price)}억원</td>
                             <td>{d.area}㎡</td>
                             <td>{house_type_kor_text[d.house_type]}</td>
-                            <td>{d.commute_time}</td>
+                            <td>{d.commute_time}분</td>
                         </tr>
                     }
                     )}

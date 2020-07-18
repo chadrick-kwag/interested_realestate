@@ -25,8 +25,8 @@ class App extends React.Component {
         this.state = {
             viewmode: "listview",
             data: [
-                new RealEstate(house_type.BUY, 90000000, "서울 강남구", 0,0, 40, 98),
-                new RealEstate(house_type.CHUNGYAK, 80000000, "서울 캉남구", 0,0, 30, 58)
+                new RealEstate(house_type.BUY, 90000000, "서울 강남구", 37.5532931,126.9779355, 40, 98),
+                new RealEstate(house_type.CHUNGYAK, 80000000, "서울 캉남구", 37.4958917,127.0355279, 30, 58)
             ]
         }
 
