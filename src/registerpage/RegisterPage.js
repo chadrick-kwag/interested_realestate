@@ -137,8 +137,14 @@ class RegisterPage extends React.Component {
                     })} />
                 </div>
 
-                <div>
-                    <button onClick={e => this.trysubmit()}>submit</button>
+                <div style={{
+                    display: 'flex',
+                    flexDirection: 'row'
+                }}>
+                    <Button onClick={e=>{
+                        this.props.history.push('/')
+                    }}>cancel</Button>
+                    <Button onClick={e => this.trysubmit()}>submit</Button>
                 </div>
             </div>
         )

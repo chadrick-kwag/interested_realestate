@@ -7,6 +7,12 @@ const house_type = {
     CHUNGYAK: "CHUNGYAK"
 }
 
+const house_type_kor_text = {
+    "BUY": "매매",
+    "JEONSAE": "전세",
+    "CHUNGYAK": "청약"
+}
+
 class RealEstate{
 
     constructor(house_type, price, address, position, commute_time, area){
@@ -21,4 +27,4 @@ class RealEstate{
 
 export default RealEstate
 
-export {house_type}
+export {house_type, house_type_kor_text}

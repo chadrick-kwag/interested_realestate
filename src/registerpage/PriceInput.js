@@ -14,6 +14,21 @@ function price_text_to_num(price_text){
 }
 
 
+function parse_price_text_to_kor_text(price_text) {
+
+
+    let num_text = price_text_to_num(price_text)
+
+
+    let kor_text = numToKorean(Number(num_text))
+
+    if(kor_text!==""){
+        kor_text += " 원"
+    }
+
+    return kor_text
+}
+
 class PriceInput extends React.Component {
 
 
@@ -22,23 +37,9 @@ class PriceInput extends React.Component {
 
 
         this.update_price_text = this.update_price_text.bind(this)
-        this.parse_price_text_to_kor_text = this.parse_price_text_to_kor_text.bind(this)
+        
     }
 
-
-    // price_text_to_num(price_text){
-    //     let t = price_text.trim()
-    //     t = t.replace(/,/g,'')
-
-
-    //     return t
-    // }
-
-    price_text_to_kor_text(price_text){
-        let num = price_text_to_num(price_text)
-
-
-    }
 
     num_to_price_text(num_text){
         let output=""
@@ -68,20 +69,20 @@ class PriceInput extends React.Component {
         
     }
 
-    parse_price_text_to_kor_text(price_text) {
+    // parse_price_text_to_kor_text(price_text) {
 
 
-        let num_text = price_text_to_num(price_text)
+    //     let num_text = price_text_to_num(price_text)
 
 
-        let kor_text = numToKorean(Number(num_text))
+    //     let kor_text = numToKorean(Number(num_text))
 
-        if(kor_text!==""){
-            kor_text += " 원"
-        }
+    //     if(kor_text!==""){
+    //         kor_text += " 원"
+    //     }
 
-        return kor_text
-    }
+    //     return kor_text
+    // }
 
 
     render() {
@@ -101,10 +102,10 @@ class PriceInput extends React.Component {
             }} onChange={e => {
                 
                 this.update_price_text(e.target.value)}} />
-            <span style={{width: "20%"}}>{this.parse_price_text_to_kor_text(this.props.price_text)}</span>
+            <span style={{width: "20%"}}>{parse_price_text_to_kor_text(this.props.price_text)}</span>
         </div>
     }
 }
 
 export default PriceInput
-export {price_text_to_num}
+export {price_text_to_num, parse_price_text_to_kor_text}

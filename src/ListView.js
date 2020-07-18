@@ -2,6 +2,7 @@ import React from 'react'
 import './ListView.css'
 
 import { Table, Button } from 'react-bootstrap'
+import { house_type_kor_text } from './RealEstate'
 
 
 
@@ -37,7 +38,7 @@ class ListView extends React.Component {
     }
 
     update_processed_ascending_options(key, newval) {
-        
+
         let new_ao = {}
         Object.keys(this.state.ascending_options).map(k => {
 
@@ -48,7 +49,7 @@ class ListView extends React.Component {
                 new_ao[k] = null
             }
         })
-        
+
 
         this.setState({
             ascending_options: new_ao
@@ -56,15 +57,15 @@ class ListView extends React.Component {
 
     }
 
-    get_ascending_icon_for_type(key){
-        if(this.state.ascending_options[key]==null){
+    get_ascending_icon_for_type(key) {
+        if (this.state.ascending_options[key] == null) {
             return null
         }
-        else{
-            if(this.state.ascending_options[key]==true){
+        else {
+            if (this.state.ascending_options[key] == true) {
                 return '△'
             }
-            else{
+            else {
                 return '▽'
             }
         }
@@ -138,14 +139,17 @@ class ListView extends React.Component {
                     }>출퇴근소요시간{this.get_ascending_icon_for_type("commute_time")}</Button></th>
                 </thead>
                 <tbody>
-                    {this.props.data.map(d =>
-                        <tr >
+                    {this.props.data.map(d => {
+                        
+
+                        return <tr >
                             <td>{d.address}</td>
                             <td>{d.price}</td>
                             <td>{d.area}</td>
-                            <td>{d.house_type}</td>
+                            <td>{house_type_kor_text[d.house_type]}</td>
                             <td>{d.commute_time}</td>
                         </tr>
+                    }
                     )}
                 </tbody>
             </Table>
