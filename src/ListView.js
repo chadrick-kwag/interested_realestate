@@ -141,11 +141,10 @@ class ListView extends React.Component {
                 <tbody>
                     {this.props.data.map(d => {
                         
-
                         return <tr >
                             <td>{d.address}</td>
                             <td>{d.price}</td>
-                            <td>{d.area}</td>
+                            <td>{d.area}㎡</td>
                             <td>{house_type_kor_text[d.house_type]}</td>
                             <td>{d.commute_time}</td>
                         </tr>

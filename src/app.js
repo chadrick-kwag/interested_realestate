@@ -25,8 +25,8 @@ class App extends React.Component {
         this.state = {
             viewmode: "listview",
             data: [
-                new RealEstate(house_type.BUY, 90000000, "서울 강남구", null, 40, 98),
-                new RealEstate(house_type.CHUNGYAK, 80000000, "서울 캉남구", null, 30, 58)
+                new RealEstate(house_type.BUY, 90000000, "서울 강남구", 0,0, 40, 98),
+                new RealEstate(house_type.CHUNGYAK, 80000000, "서울 캉남구", 0,0, 30, 58)
             ]
         }
 
@@ -37,11 +37,8 @@ class App extends React.Component {
 
     sort_data_by_key(key, is_ascending){
 
-        console.log("inside sort_data_by_key, key=" + key  + ", is_ascending: " + is_ascending)
         let data_list = this.state.data
 
-        console.log("before sorting")
-        console.log(data_list)
 
         data_list.sort((a,b)=>{
             if(a[key] < b[key]){
@@ -52,8 +49,6 @@ class App extends React.Component {
             }
         })
 
-        console.log("after sorting")
-        console.log(data_list)
 
         this.setState({
             data: data_list
@@ -63,7 +58,6 @@ class App extends React.Component {
 
     submitData(newdata){
 
-        console.log('received new data: ', newdata)
 
         let new_data_list = this.state.data
         new_data_list.push(newdata)
@@ -71,8 +65,6 @@ class App extends React.Component {
             data: new_data_list
         })
 
-        console.log('after registering, data')
-        console.log(this.state.data)
 
         return true
     }
@@ -98,7 +90,7 @@ class App extends React.Component {
         return (
             <BrowserRouter>
                 <div>
-                    <TopNavBar toggleCallback={this.toggleViewMode}/>
+                    <TopNavBar viewmode={this.state.viewmode} toggleCallback={this.toggleViewMode}/>
                     <Switch>
                         <Route path='/register'>
                             <RegisterPage submitCallback={this.submitData}/>
