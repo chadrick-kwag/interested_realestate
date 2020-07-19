@@ -4,6 +4,7 @@ import './ListView.css'
 import { Table, Button } from 'react-bootstrap'
 import { house_type_kor_text } from './RealEstate'
 import {price_num_to_kor_text_cut_at_uk} from './registerpage/PriceInput'
+import { withRouter } from 'react-router'
 
 
 
@@ -138,6 +139,7 @@ class ListView extends React.Component {
                             this.props.sort_by_key("commute_time", newval)
                         }
                     }>출퇴근소요시간{this.get_ascending_icon_for_type("commute_time")}</Button></th>
+                    <th></th>
                 </thead>
                 <tbody>
                     {this.props.data.map(d => {
@@ -148,6 +150,17 @@ class ListView extends React.Component {
                             <td>{d.area}㎡</td>
                             <td>{house_type_kor_text[d.house_type]}</td>
                             <td>{d.commute_time}분</td>
+                            <td>
+                                <div>
+                                    <Button onClick={e=>{
+                                        this.props.setDetailViewId(d.id, ()=>{
+                                            console.log('set detail view callback')
+                                        })
+                                        this.props.history.push('/redetail')
+                                    }}>상세보기</Button>
+                                    <Button>삭제</Button>
+                                </div>
+                            </td>
                         </tr>
                     }
                     )}
@@ -158,4 +171,4 @@ class ListView extends React.Component {
 }
 
 
-export default ListView
+export default withRouter(ListView)

@@ -15,7 +15,8 @@ const house_type_kor_text = {
 
 class RealEstate{
 
-    constructor(house_type, price, address, latitude, longitude, commute_time, area){
+    constructor(id,house_type, price, address, latitude, longitude, commute_time, area){
+        this.id = id
         this.house_type = house_type
         this.price = price
         this.address = address
