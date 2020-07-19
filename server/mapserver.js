@@ -28,6 +28,7 @@ let modelschema = new Schema({
 let model = mongoose.model('col1', modelschema)
 
 let bodyparser = require('body-parser')
+const { query } = require('express')
 
 app.use(bodyparser.urlencoded({ extended: true }))
 app.use(bodyparser.json())
@@ -79,6 +80,73 @@ app.get('/api/realestate/fetch', (req,res)=>{
         })
         
     })
+})
+
+app.post('/api/realestate/delete', (req,res)=>{
+
+    let query_id = req.body.id
+    console.log("query_id: " + query_id)
+
+    if(query_id==null){
+        res.json({
+            success: false,
+            msg: "query id is null"
+        })
+        return
+    }
+
+    model.findByIdAndRemove(query_id, (err)=>{
+        console.log(err)
+        if(err){
+            console.log('error occured in removing')
+            res.json({
+                success: false
+            })
+
+            return
+        }
+
+        console.log("success in removing")
+        res.json({
+            success: true
+        })
+        return
+    })
+
+    // model.find({
+    //     "_id": query_id
+    // }, (err, results)=>{
+    //     if(err){
+    //         console.log(err)
+    //         res.json({
+    //             success: false,
+    //             msg: "error while fetching from db"
+    //         })
+    //         return
+    //     }
+
+    //     console.log(results)
+
+    //     if(results.length<1){
+    //         res.json({
+    //             success: false,
+    //             msg: "no results found"
+    //         })
+    //         return
+    //     }
+
+    //     if(results.length >2){
+    //         res.json({
+    //             success: false,
+    //             msg: "multiple results found."
+    //         })
+    //         return
+    //     }
+
+    //     let result = results[0]
+
+        
+    // })
 })
 
 app.post('/api/geo', (req, res) => {

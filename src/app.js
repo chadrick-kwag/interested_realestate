@@ -37,10 +37,55 @@ class App extends React.Component {
         this.toggleViewMode = this.toggleViewMode.bind(this)
         this.sort_data_by_key = this.sort_data_by_key.bind(this)
         this.fetch_data = this.fetch_data.bind(this)
+        this.remove_data = this.remove_data.bind(this)
     }
 
     componentDidMount() {
         this.fetch_data()
+    }
+
+
+    remove_data(id, remove_from_data_flag, callback) {
+
+        console.log('remove data triggered. id=' + id)
+        fetch("http://localhost:3000/api/realestate/delete", {
+            method: 'POST',
+            body: JSON.stringify({
+                "id": id
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(d => d.json())
+            .then(d => {
+                console.log(d)
+
+                if (!d.success) {
+                    console.log('failed to remove re item from db')
+                    return
+                }
+
+                console.log('success removing re item from db')
+                if(remove_from_data_flag){
+                    let new_data=[]
+
+                    this.state.data.forEach(d=>{
+                        if(d.id!==id){
+                            new_data.push(d)
+                        }
+                    })
+
+                    this.setState({
+                        data: new_data
+                    })
+                }
+
+                if (callback) callback()
+            })
+            .catch(e => {
+                console.log('error while fetching for delete')
+                console.log(e)
+            })
     }
 
 
@@ -128,12 +173,12 @@ class App extends React.Component {
     render() {
 
         let redetail_data = null
-        if(this.state.detailview_id==null){
+        if (this.state.detailview_id == null) {
             redetail_data = null
         }
-        else{
-            for(let i=0;i<this.state.data.length;i++){
-                if(this.state.data[i].id == this.state.detailview_id){
+        else {
+            for (let i = 0; i < this.state.data.length; i++) {
+                if (this.state.data[i].id == this.state.detailview_id) {
                     redetail_data = this.state.data[i]
                     break
                 }
@@ -162,6 +207,8 @@ class App extends React.Component {
                                         detailview_id: id
                                     })
                                 }}
+
+                                remove_re_item = {this.remove_data}
                             /> : null}
                             {this.state.viewmode == "mapview" ? <MapView data={this.state.data} /> : null}
                         </Route>

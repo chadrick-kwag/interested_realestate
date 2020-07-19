@@ -158,7 +158,7 @@ class ListView extends React.Component {
                                         })
                                         this.props.history.push('/redetail')
                                     }}>상세보기</Button>
-                                    <Button>삭제</Button>
+                                    <Button onClick={e=>this.props.remove_re_item(d.id, true)}>삭제</Button>
                                 </div>
                             </td>
                         </tr>
