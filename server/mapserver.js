@@ -6,11 +6,80 @@ const cors = require('cors')
 const app = express()
 const port = 3000
 
+const mongoose = require('mongoose')
+
+mongoose.connect('mongodb://localhost/test',  { useNewUrlParser: true })
+
+const db = mongoose.connection
+
+db.on('error', console.error.bind(console,'connection error:'))
+
+let Schema = mongoose.Schema
+let modelschema = new Schema({
+    address: String,
+    price: Number,
+    area: Number,
+    commute_time: Number,
+    longitude: Number,
+    latitude: Number,
+    house_type: String
+})
+
+let model = mongoose.model('col1', modelschema)
+
 let bodyparser = require('body-parser')
 
 app.use(bodyparser.urlencoded({ extended: true }))
 app.use(bodyparser.json())
 app.use(cors())
+
+
+app.post('/api/realestate/create', (req,res)=>{
+    let data = req.body
+
+    console.log(data)
+
+    let new_instance = new model(data)
+
+    console.log(new_instance)
+
+    new_instance.save(e=>{
+        if(e){
+            console.log('error creating instance')
+            res.json({
+                success: false
+            })
+            return
+        }
+        
+        console.log("success creating new instance")
+        res.json({
+            success: true
+        })
+
+
+    })
+
+    
+})
+
+app.get('/api/realestate/fetch', (req,res)=>{
+
+    model.find({}, (err, results)=>{
+        if(err){
+            res.json({
+                success: false
+            })
+            return
+        }
+
+        res.json({
+            success: true,
+            data: results
+        })
+        
+    })
+})
 
 app.post('/api/geo', (req, res) => {
     let data = req.body
@@ -74,12 +143,6 @@ app.post('/api/geo', (req, res) => {
         }
         )
 
-
-
-    // res.json({
-    //     success: true,
-    //     msg: "hello"
-    // })
 })
 
 

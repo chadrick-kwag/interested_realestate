@@ -33,6 +33,43 @@ class App extends React.Component {
         this.submitData = this.submitData.bind(this)
         this.toggleViewMode = this.toggleViewMode.bind(this)
         this.sort_data_by_key = this.sort_data_by_key.bind(this)
+        this.fetch_data = this.fetch_data.bind(this)
+    }
+
+    componentDidMount(){
+        this.fetch_data()
+    }
+
+
+    fetch_data(){
+        fetch('http://localhost:3000/api/realestate/fetch').then(d=>d.json())
+        .then(d=>{
+            console.log(d)
+
+            if(!d.success){
+                console.log("not success in fetching data")
+                this.setState({
+                    data: []
+                })
+                return
+            }
+
+            let re_arr = []
+
+            d.data.map(i=>{
+                let re = new RealEstate(i.house_type, i.price, i.address, i.latitude, i.longitude, i.area, i.commute_time)
+                re_arr.push(re)
+            })
+
+            console.log("re_arr")
+            console.log(re_arr)
+
+            this.setState({
+                data: re_arr
+            })
+
+
+        })
     }
 
     sort_data_by_key(key, is_ascending){
@@ -93,7 +130,7 @@ class App extends React.Component {
                     <TopNavBar viewmode={this.state.viewmode} toggleCallback={this.toggleViewMode}/>
                     <Switch>
                         <Route path='/register'>
-                            <RegisterPage submitCallback={this.submitData}/>
+                            <RegisterPage submitCallback={this.fetch_data}/>
                         </Route>
                         <Route path='/'>
 

@@ -9,7 +9,7 @@ import { Button, Form } from 'react-bootstrap'
 
 
 import AddressPositionSearch from './AddressPositionSearchComponent.js'
-import PriceInput, {price_text_to_num} from './PriceInput'
+import PriceInput, { price_text_to_num } from './PriceInput'
 import AreaInput from './AreaInput'
 import CommuteTimeComponent from './CommuteTimeComponent'
 
@@ -78,7 +78,7 @@ class RegisterPage extends React.Component {
             return
         }
 
-        if(this.state.longitude==null || this.state.latitude==null){
+        if (this.state.longitude == null || this.state.latitude == null) {
             alert('invalid position info')
             return
         }
@@ -86,17 +86,53 @@ class RegisterPage extends React.Component {
         let price = price_text_to_num(this.state.price_text)
         console.log("submit price: " + price)
 
-        let rs = new RealEstate(this.state._house_type, price, this.state.address, this.state.latitude, this.state.longitude, this.state.commute_time, this.state.area_text)
+        // create realestate on db side
+
+        fetch('http://localhost:3000/api/realestate/create', {
+            method: 'POST',
+            body: JSON.stringify({
+                address: this.state.address,
+                "price": price,
+                house_type: this.state._house_type,
+                latitude: this.state.latitude,
+                longitude: this.state.longitude,
+                commute_time: this.state.commute_time,
+                area: this.state.area_text
+
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(d => d.json()).then(d => {
+            if (d.success) {
+                // force data list update
+                let rs = new RealEstate(this.state._house_type, price, this.state.address, this.state.latitude, this.state.longitude, this.state.commute_time, this.state.area_text)
+
+                // let result = this.props.submitCallback(rs)
+
+                this.props.submitCallback()
+                this.props.history.push('/')
 
 
-        let result = this.props.submitCallback(rs)
+                // if (result) {
+                //     this.props.history.push('/')
+                // }
+                // else {
+                //     alert("error registering")
+                // }
 
-        if (result) {
-            this.props.history.push('/')
-        }
-        else {
-            alert("error registering")
-        }
+            }
+            else {
+                alert('failed to create item in server')
+            }
+        })
+            .catch(e => {
+                console.log('error while creating item in server')
+                console.log(e)
+            })
+
+
+
     }
 
     updateAreaUnitIsMetric(newval) {
@@ -122,12 +158,13 @@ class RegisterPage extends React.Component {
                         <Button variant={this.state._house_type == house_type.CHUNGYAK ? "warning" : "light"} onClick={e => this.setState({ _house_type: house_type.CHUNGYAK })}>청약</Button>
                     </div>
                 </div>
-                <AddressPositionSearch updateAddress={(addr, lat,lng) => {
+                <AddressPositionSearch updateAddress={(addr, lat, lng) => {
                     // console.log("updating address: " + a)
-                    this.setState({ address: addr,
+                    this.setState({
+                        address: addr,
                         latitude: lat,
                         longitude: lng
-                     })
+                    })
 
                 }} address={this.state.address} />
                 <div>
@@ -151,7 +188,7 @@ class RegisterPage extends React.Component {
                     display: 'flex',
                     flexDirection: 'row'
                 }}>
-                    <Button onClick={e=>{
+                    <Button onClick={e => {
                         this.props.history.push('/')
                     }}>cancel</Button>
                     <Button onClick={e => this.trysubmit()}>submit</Button>
