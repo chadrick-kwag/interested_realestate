@@ -2,7 +2,7 @@ const hwp = require('html-webpack-plugin')
 const path = require('path')
 
 module.exports = {
-    entry: './src/app.js',
+    entry: './src/fakeapp.js',
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'bundle.js'

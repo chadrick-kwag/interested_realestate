@@ -22,6 +22,15 @@ class DetailViewPage extends React.Component {
                 <div>
                     <span>가격:</span> <span>{this.props.data.price}</span>
                 </div>
+                <div>
+                    <span>면적</span>
+                    <span>{this.props.data.area}㎡</span>
+                </div>
+
+                <div>
+                    <span>출퇴근시간</span>
+                    <span>{this.props.data.commute_time} 분</span>
+                </div>
 
 
             </div>
