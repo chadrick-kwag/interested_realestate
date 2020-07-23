@@ -1,4 +1,5 @@
 const express = require('express')
+var session = require('express-session')
 
 const axios = require('axios')
 const cors = require('cors')
@@ -8,11 +9,23 @@ const port = 3000
 
 const mongoose = require('mongoose')
 
-mongoose.connect('mongodb://localhost/test',  { useNewUrlParser: true })
+const passport = require('passport')
+var LocalStrategy = require('passport-local').Strategy
+
+
+const user_list = [{
+    username: 'a',
+    password: 'b'
+}]
+
+
+
+
+mongoose.connect('mongodb://localhost/test', { useNewUrlParser: true })
 
 const db = mongoose.connection
 
-db.on('error', console.error.bind(console,'connection error:'))
+db.on('error', console.error.bind(console, 'connection error:'))
 
 let Schema = mongoose.Schema
 let modelschema = new Schema({
@@ -30,12 +43,103 @@ let model = mongoose.model('col1', modelschema)
 let bodyparser = require('body-parser')
 const { query } = require('express')
 
-app.use(bodyparser.urlencoded({ extended: true }))
+app.use(bodyparser.urlencoded({ extended: false }))
 app.use(bodyparser.json())
-app.use(cors())
+app.use(cors({
+    credentials: true,
+    origin: 'http://localhost:8080'
+}))
+app.use(session({ secret: 'somekey' }))
+app.use(passport.initialize())
+app.use(passport.session())
 
 
-app.post('/api/realestate/create', (req,res)=>{
+
+passport.use(new LocalStrategy({
+    usernameField: 'username',
+    passwordField: 'password'
+
+}, function (username, password, done) {
+
+    console.log('username: ' + username)
+
+
+    console.log("inside localstrategy function")
+
+    for (let i = 0; i < user_list.length; i++) {
+        let sel_user = user_list[i]
+        if (sel_user.username == username && sel_user.password == password) {
+            console.log('user found')
+            console.log(sel_user)
+            return done(null, sel_user)
+        }
+
+    }
+
+    return done(null, false, { msg: 'no user found' })
+}))
+
+passport.serializeUser((user, done) => {
+    done(null, user.username)
+})
+
+passport.deserializeUser((id, done) => {
+    for (let i = 0; i < user_list.length; i++) {
+        let sel_user = user_list[i]
+
+        if (id == sel_user.username) {
+            done(null, sel_user)
+            return
+        }
+    }
+
+    done(null, false)
+
+})
+
+
+app.post('/api/login', function (req, res, next) {
+
+    console.log(req.body)
+
+    passport.authenticate('local', function (err, user, info) {
+
+        // console.log(user)
+
+        if (err) {
+            console.log('error occured')
+            // console.log(err)
+            // return next(err)
+            return res.json({
+                success: false,
+                msg: 'err'
+            })
+        }
+
+        if (user) {
+            let userjson = JSON.stringify(user)
+
+            req.logIn(user, function (err) {
+                if (err) {
+                    return next(err)
+                }
+                return res.json({
+                    success: true,
+                    userdata: user
+                })
+            })
+        }
+        else {
+            console.log('login fail')
+            res.json({
+                success: false,
+                msg: 'login fail'
+            })
+        }
+    })(req, res, next)
+})
+
+app.post('/api/realestate/create', (req, res) => {
     let data = req.body
 
     console.log(data)
@@ -44,15 +148,15 @@ app.post('/api/realestate/create', (req,res)=>{
 
     console.log(new_instance)
 
-    new_instance.save(e=>{
-        if(e){
+    new_instance.save(e => {
+        if (e) {
             console.log('error creating instance')
             res.json({
                 success: false
             })
             return
         }
-        
+
         console.log("success creating new instance")
         res.json({
             success: true
@@ -61,13 +165,13 @@ app.post('/api/realestate/create', (req,res)=>{
 
     })
 
-    
+
 })
 
-app.get('/api/realestate/fetch', (req,res)=>{
+app.get('/api/realestate/fetch', (req, res) => {
 
-    model.find({}, (err, results)=>{
-        if(err){
+    model.find({}, (err, results) => {
+        if (err) {
             res.json({
                 success: false
             })
@@ -78,16 +182,16 @@ app.get('/api/realestate/fetch', (req,res)=>{
             success: true,
             data: results
         })
-        
+
     })
 })
 
-app.post('/api/realestate/delete', (req,res)=>{
+app.post('/api/realestate/delete', (req, res) => {
 
     let query_id = req.body.id
     console.log("query_id: " + query_id)
 
-    if(query_id==null){
+    if (query_id == null) {
         res.json({
             success: false,
             msg: "query id is null"
@@ -95,9 +199,9 @@ app.post('/api/realestate/delete', (req,res)=>{
         return
     }
 
-    model.findByIdAndRemove(query_id, (err)=>{
+    model.findByIdAndRemove(query_id, (err) => {
         console.log(err)
-        if(err){
+        if (err) {
             console.log('error occured in removing')
             res.json({
                 success: false
@@ -145,7 +249,7 @@ app.post('/api/realestate/delete', (req,res)=>{
 
     //     let result = results[0]
 
-        
+
     // })
 })
 
@@ -258,7 +362,7 @@ app.post('/api/reversegeo', (req, res) => {
                 success: false,
                 msg: "naver response status not ok"
             })
-            
+
 
             return
         }
@@ -319,7 +423,7 @@ app.post('/api/reversegeo', (req, res) => {
         })
         return
     })
-        
+
 })
 
 app.listen(port)
