@@ -43,13 +43,15 @@ let model = mongoose.model('col1', modelschema)
 let bodyparser = require('body-parser')
 const { query } = require('express')
 
-app.use(bodyparser.urlencoded({ extended: false }))
-app.use(bodyparser.json())
 app.use(cors({
     credentials: true,
     origin: 'http://localhost:8080'
 }))
 app.use(session({ secret: 'somekey' }))
+
+app.use(bodyparser.urlencoded({ extended: false }))
+app.use(bodyparser.json())
+
 app.use(passport.initialize())
 app.use(passport.session())
 
@@ -80,10 +82,12 @@ passport.use(new LocalStrategy({
 }))
 
 passport.serializeUser((user, done) => {
+    console.log(user)   
     done(null, user.username)
 })
 
 passport.deserializeUser((id, done) => {
+    console.log("inside deserializeuser")
     for (let i = 0; i < user_list.length; i++) {
         let sel_user = user_list[i]
 
@@ -97,6 +101,68 @@ passport.deserializeUser((id, done) => {
 
 })
 
+
+
+var session_required_middleware = (req, res, next) => {
+    console.log(req.headers)
+    console.log("inside session required middleware")
+    passport.authenticate('local', function (err, user, info) {
+
+        console.log(user)
+
+        if (err) {
+            console.log(err)
+            console.log('error occured')
+            // console.log(err)
+            // return next(err)
+            return res.json({
+                success: false,
+                msg: 'err authenticating'
+            })
+        }
+
+        if (user) {
+            let userjson = JSON.stringify(user)
+
+            req.logIn(user, function (err) {
+                if (err) {
+                    return res.json({
+                        success: false,
+                        msg: 'err authenticating'
+                    })
+                }
+
+            })
+            next(req, res)
+        }
+        else {
+            return res.json({
+                success: false,
+                msg: 'unauthenticated access'
+            })
+        }
+    })(req, res, next)
+}
+
+
+
+app.get('/api/loggedin', (req, res) => {
+    console.log('loggedin called')
+    console.log(req.user)
+    if (req.user) {
+        return res.json({
+            success: true,
+            loggedin: true,
+            userdata: req.user
+        })
+
+    }
+    else {
+        return res.json({
+            success: false
+        })
+    }
+})
 
 app.post('/api/login', function (req, res, next) {
 

@@ -10,11 +10,15 @@ class LoginPage extends React.Component {
 
         this.state = {
             username: 'a',
-            password: 'b'
+            password: 'b',
+            errmsg: null
         }
 
         this.onsubmit = this.onsubmit.bind(this)
+        
+
     }
+
 
     onsubmit() {
         fetch('http://localhost:3000/api/login', {
@@ -30,11 +34,28 @@ class LoginPage extends React.Component {
             })
         }).then(d => d.json())
             .then(d => {
+                
                 console.log(d)
+
+                if(d.success){
+                    // update userinfo
+                    this.props.update_user_profile(d.userdata.username)
+                    return;
+                }
+                else{
+                    this.setState({
+                        password: "",
+                        errmsg: "login failed"
+                    })
+                }
 
             })
             .catch(e => {
                 console.log(e)
+
+                this.setState({
+                    errmsg: "login server fail"
+                })
             })
     }
 

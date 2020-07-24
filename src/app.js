@@ -14,6 +14,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import DetailViewPage from './detaeilviewpage/DetailViewPage'
+import LoginPage from './loginpage/LoginPage'
 
 
 
@@ -25,6 +26,7 @@ class App extends React.Component {
         super(props)
 
         this.state = {
+            username: null,
             viewmode: "listview",
             data: [
                 // new RealEstate(house_type.BUY, 90000000, "서울 강남구", 37.5532931,126.9779355, 40, 98),
@@ -38,10 +40,14 @@ class App extends React.Component {
         this.sort_data_by_key = this.sort_data_by_key.bind(this)
         this.fetch_data = this.fetch_data.bind(this)
         this.remove_data = this.remove_data.bind(this)
+        this.updateUserProfile = this.updateUserProfile.bind(this)
+        this.checkloginstatus = this.checkloginstatus.bind(this)
     }
 
     componentDidMount() {
-        this.fetch_data()
+        // this.fetch_data()
+
+        this.checkloginstatus()
     }
 
 
@@ -86,6 +92,28 @@ class App extends React.Component {
                 console.log('error while fetching for delete')
                 console.log(e)
             })
+    }
+
+    
+    checkloginstatus(){
+        fetch('http://localhost:3000/api/loggedin', {
+            withCredentials: true,
+            credentials: 'include',
+        }).then(d=>d.json())
+        .then(d=>{
+
+            console.log('check login status result')
+            console.log(d)
+            if(d.loggedin){
+                this.setState({
+                    username: d.userdata.username
+                })
+            }
+            else{
+                console.log('not logged in confirmed')
+            }
+        })
+        .catch(e=>console.log(e))
     }
 
 
@@ -170,6 +198,12 @@ class App extends React.Component {
         }
     }
 
+    updateUserProfile(up){
+        this.setState({
+            username: up
+        })
+    }
+
     render() {
 
         let redetail_data = null
@@ -186,45 +220,51 @@ class App extends React.Component {
 
         }
 
-        return (
-            <BrowserRouter>
-                <div>
-                    <TopNavBar viewmode={this.state.viewmode} toggleCallback={this.toggleViewMode} />
-                    <Switch>
-                        <Route path='/register'>
-                            <RegisterPage submitCallback={this.fetch_data} />
-                        </Route>
-                        <Route path='/redetail'>
-                            <DetailViewPage data={redetail_data} />
-                        </Route>
-                        <Route exact path='/'>
-
-
-                            {this.state.viewmode == "listview" ? <ListView data={this.state.data} sort_by_key={this.sort_data_by_key}
-                                setDetailViewId={(id) => {
-                                    console.log('set detail view id prop fn')
-                                    this.setState({
-                                        detailview_id: id
-                                    })
-                                }}
-
-                                remove_re_item = {this.remove_data}
-                            /> : null}
-                            {this.state.viewmode == "mapview" ? <MapView data={this.state.data} /> : null}
-                        </Route>
-                        <Route>
-                            <div>invalid url</div>
-                        </Route>
-
-                    </Switch>
-
-
-
-                </div>
-            </BrowserRouter>
-
-        )
+        if(this.state.username!=null){
+            return (
+                <BrowserRouter>
+                    <div>
+                        <TopNavBar viewmode={this.state.viewmode} toggleCallback={this.toggleViewMode} />
+                        <Switch>
+                            <Route path='/register'>
+                                <RegisterPage submitCallback={this.fetch_data} />
+                            </Route>
+                            <Route path='/redetail'>
+                                <DetailViewPage data={redetail_data} />
+                            </Route>
+                            <Route exact path='/'>
+    
+    
+                                {this.state.viewmode == "listview" ? <ListView data={this.state.data} sort_by_key={this.sort_data_by_key}
+                                    setDetailViewId={(id) => {
+                                        console.log('set detail view id prop fn')
+                                        this.setState({
+                                            detailview_id: id
+                                        })
+                                    }}
+    
+                                    remove_re_item = {this.remove_data}
+                                /> : null}
+                                {this.state.viewmode == "mapview" ? <MapView data={this.state.data} /> : null}
+                            </Route>
+                            <Route>
+                                <div>invalid url</div>
+                            </Route>
+    
+                        </Switch>
+    
+    
+    
+                    </div>
+                </BrowserRouter>
+    
+            )
+        }
+        else{
+            return <LoginPage update_user_profile={this.updateUserProfile}/>
+        }
+       
     }
 }
 
-ReactDOM.render(<App />, document.getElementById("app"))
+ReactDOM.render(<App />, document.getElementById("app")) 
