@@ -70,7 +70,7 @@ class LoginPage extends React.Component {
                 <div style={{ display: 'flex', flexDirection: 'row' }}>
                     <span>username</span>
                     <Form.Control value={this.state.username} onChange={e => this.setState({
-                        username: e.target.defaultValue
+                        username: e.target.value
                     })}></Form.Control>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'row' }}>

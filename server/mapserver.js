@@ -28,15 +28,16 @@ let modelschema = new Schema({
     commute_time: Number,
     longitude: Number,
     latitude: Number,
-    house_type: String
+    house_type: String,
+    userid: String
 })
 
 let user_schema = new Schema({
     username: String,
     password: String
 })
-
-let model = mongoose.model('col1', modelschema)
+ 
+let RealEstate = mongoose.model('col1', modelschema)
 let User = mongoose.model('users', user_schema)
 
 let bodyparser = require('body-parser')
@@ -54,6 +55,14 @@ app.use(bodyparser.json())
 app.use(passport.initialize())
 app.use(passport.session())
 
+var user_authenticate_mw = (req,res,next)=>{
+    if(req.user){
+        return next()
+    }
+
+    return res.status(500).send({ error: "user not authenticated"})
+    
+}
 
 
 passport.use(new LocalStrategy({
@@ -70,6 +79,9 @@ passport.use(new LocalStrategy({
     User.findOne({
         username: username
     }, (err, user)=>{
+
+        console.log('found user')
+        console.log(user)
         if(err){
             return done(err)
         }
@@ -89,6 +101,7 @@ passport.use(new LocalStrategy({
 }))
 
 passport.serializeUser((user, done) => {
+    console.log('serializer')
     console.log(user)   
     done(null, user._id)
 })
@@ -178,12 +191,15 @@ app.post('/api/login', function (req, res, next) {
     })(req, res, next)
 })
 
-app.post('/api/realestate/create', (req, res) => {
+app.post('/api/realestate/create', user_authenticate_mw, (req, res) => {
     let data = req.body
 
     console.log(data)
 
-    let new_instance = new model(data)
+    let update_data = data
+    update_data['userid'] = req.user._id
+
+    let new_instance = new RealEstate(update_data)
 
     console.log(new_instance)
 
@@ -207,9 +223,12 @@ app.post('/api/realestate/create', (req, res) => {
 
 })
 
-app.get('/api/realestate/fetch', (req, res) => {
 
-    model.find({}, (err, results) => {
+
+app.get('/api/realestate/fetch', user_authenticate_mw, (req, res) => {
+
+    let userid = req.user._id
+    RealEstate.find({userid: userid}, (err, results) => {
         if (err) {
             res.json({
                 success: false
@@ -238,7 +257,7 @@ app.post('/api/realestate/delete', (req, res) => {
         return
     }
 
-    model.findByIdAndRemove(query_id, (err) => {
+    RealEstate.findByIdAndRemove(query_id, (err) => {
         console.log(err)
         if (err) {
             console.log('error occured in removing')

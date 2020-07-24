@@ -80,7 +80,10 @@ class MainPage extends React.Component{
 
     
     fetch_data() {
-        fetch('http://localhost:3000/api/realestate/fetch').then(d => d.json())
+        fetch('http://localhost:3000/api/realestate/fetch',{
+            withCredentials: true,
+            credentials: 'include',
+        }).then(d => d.json())
             .then(d => {
                 console.log(d)
 
