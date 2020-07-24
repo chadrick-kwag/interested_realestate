@@ -101,51 +101,6 @@ passport.deserializeUser((id, done) => {
 
 })
 
-
-
-var session_required_middleware = (req, res, next) => {
-    console.log(req.headers)
-    console.log("inside session required middleware")
-    passport.authenticate('local', function (err, user, info) {
-
-        console.log(user)
-
-        if (err) {
-            console.log(err)
-            console.log('error occured')
-            // console.log(err)
-            // return next(err)
-            return res.json({
-                success: false,
-                msg: 'err authenticating'
-            })
-        }
-
-        if (user) {
-            let userjson = JSON.stringify(user)
-
-            req.logIn(user, function (err) {
-                if (err) {
-                    return res.json({
-                        success: false,
-                        msg: 'err authenticating'
-                    })
-                }
-
-            })
-            next(req, res)
-        }
-        else {
-            return res.json({
-                success: false,
-                msg: 'unauthenticated access'
-            })
-        }
-    })(req, res, next)
-}
-
-
-
 app.get('/api/loggedin', (req, res) => {
     console.log('loggedin called')
     console.log(req.user)
