@@ -13,13 +13,6 @@ const passport = require('passport')
 var LocalStrategy = require('passport-local').Strategy
 
 
-const user_list = [{
-    username: 'a',
-    password: 'b'
-}]
-
-
-
 
 mongoose.connect('mongodb://localhost/test', { useNewUrlParser: true })
 
@@ -38,7 +31,13 @@ let modelschema = new Schema({
     house_type: String
 })
 
+let user_schema = new Schema({
+    username: String,
+    password: String
+})
+
 let model = mongoose.model('col1', modelschema)
+let User = mongoose.model('users', user_schema)
 
 let bodyparser = require('body-parser')
 const { query } = require('express')
@@ -68,36 +67,58 @@ passport.use(new LocalStrategy({
 
     console.log("inside localstrategy function")
 
-    for (let i = 0; i < user_list.length; i++) {
-        let sel_user = user_list[i]
-        if (sel_user.username == username && sel_user.password == password) {
-            console.log('user found')
-            console.log(sel_user)
-            return done(null, sel_user)
+    User.findOne({
+        username: username
+    }, (err, user)=>{
+        if(err){
+            return done(err)
+        }
+        
+        if(!user){
+            return done(null, false, {msg: "incorrect username"})
         }
 
-    }
+        // validate password
+        if(password!==user.password){
+            return done(null, false, {msg: "incorrect password"})
+        }
 
-    return done(null, false, { msg: 'no user found' })
+        return done(null, user)
+    })
+
 }))
 
 passport.serializeUser((user, done) => {
     console.log(user)   
-    done(null, user.username)
+    done(null, user._id)
 })
 
 passport.deserializeUser((id, done) => {
-    console.log("inside deserializeuser")
-    for (let i = 0; i < user_list.length; i++) {
-        let sel_user = user_list[i]
 
-        if (id == sel_user.username) {
-            done(null, sel_user)
-            return
+
+    User.findOne({_id: id}, (err, user)=>{
+        if(err){
+            return done(err)
         }
-    }
 
-    done(null, false)
+        if(!user){
+            return done(null, false)
+        }
+
+        done(null, user)
+    })
+
+    // console.log("inside deserializeuser")
+    // for (let i = 0; i < user_list.length; i++) {
+    //     let sel_user = user_list[i]
+
+    //     if (id == sel_user.username) {
+    //         done(null, sel_user)
+    //         return
+    //     }
+    // }
+
+    // done(null, false)
 
 })
 
@@ -125,12 +146,9 @@ app.post('/api/login', function (req, res, next) {
 
     passport.authenticate('local', function (err, user, info) {
 
-        // console.log(user)
 
         if (err) {
             console.log('error occured')
-            // console.log(err)
-            // return next(err)
             return res.json({
                 success: false,
                 msg: 'err'
