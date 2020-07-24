@@ -1,13 +1,14 @@
 import React from 'react'
 
-import {Form, Button} from 'react-bootstrap'
+import { Form, Button } from 'react-bootstrap'
+import "./loginpage.css"
 
-class LoginPage extends React.Component{
+class LoginPage extends React.Component {
 
-    constructor(props){
+    constructor(props) {
         super(props)
 
-        this.state={
+        this.state = {
             username: 'a',
             password: 'b'
         }
@@ -15,10 +16,10 @@ class LoginPage extends React.Component{
         this.onsubmit = this.onsubmit.bind(this)
     }
 
-    onsubmit(){
-        fetch('http://localhost:3000/api/login',{
+    onsubmit() {
+        fetch('http://localhost:3000/api/login', {
             method: 'POST',
-            headers:{
+            headers: {
                 "Content-Type": "application/json"
             },
             withCredentials: true,
@@ -27,33 +28,40 @@ class LoginPage extends React.Component{
                 username: this.state.username,
                 password: this.state.password
             })
-        }).then(d=>d.json())
-        .then(d=>{
-            console.log(d)
+        }).then(d => d.json())
+            .then(d => {
+                console.log(d)
 
-        })
-        .catch(e=>{
-            console.log(e)
-        })
+            })
+            .catch(e => {
+                console.log(e)
+            })
     }
 
-    render(){
+    render() {
         return <div>
-            <div style={{display: 'flex', flexDirection: 'row'}}>
-                <span>username</span>
-                <Form.Control value={this.state.username} onChange={e=>this.setState({
-                    username: e.target.defaultValue
-                })}></Form.Control>
+            <div className="background">
             </div>
-            <div style={{display: 'flex', flexDirection: 'row'}}> 
-                <span>password</span>
-                <Form.Control type='password' value={this.state.password} onChange={e=>this.setState({
-                    password: e.target.value
-                })}></Form.Control>
+            <div className="title-div noselect">
+                <h1 className="title-h1">부동산 트래커</h1>
             </div>
-
-            <Button onClick={e=>this.onsubmit()}>login</Button>
+            <div className="loginbox">
+                <div style={{ display: 'flex', flexDirection: 'row' }}>
+                    <span>username</span>
+                    <Form.Control value={this.state.username} onChange={e => this.setState({
+                        username: e.target.defaultValue
+                    })}></Form.Control>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'row' }}>
+                    <span>password</span>
+                    <Form.Control type='password' value={this.state.password} onChange={e => this.setState({
+                        password: e.target.value
+                    })}></Form.Control>
+                </div>
+                <Button onClick={e => this.onsubmit()}>login</Button>
+            </div>
         </div>
+
     }
 }
 
