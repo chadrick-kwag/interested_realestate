@@ -184,7 +184,7 @@ class MainPage extends React.Component{
 
         return <BrowserRouter>
         <div>
-            <TopNavBar viewmode={this.state.viewmode} toggleCallback={this.toggleViewMode} logout={this.props.logout} />
+            <TopNavBar viewmode={this.state.viewmode} toggleCallback={this.toggleViewMode} logout={this.props.logout} username={this.props.username}/>
             <Switch>
                 <Route path='/register'>
                     <RegisterPage submitCallback={this.fetch_data} />

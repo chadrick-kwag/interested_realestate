@@ -4,6 +4,8 @@ import {Button} from 'react-bootstrap'
 import location_img from '../../public/location.png'
 import list_img from '../../public/menu.png'
 
+import './topnavbar.css'
+
 class TopNavBar extends React.Component {
 
 
@@ -39,6 +41,7 @@ class TopNavBar extends React.Component {
                     display: "flex",
                     flexDirection: "row"
                 }}>
+                    <span className="username">{this.props.username}</span>
                     <Button onClick={e=>this.props.logout()}>로그아웃</Button>
                 </div>
 

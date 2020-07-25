@@ -94,7 +94,7 @@ class App extends React.Component {
         if(this.state.username!=null){
             return (
 
-                <MainPage logout={this.logout}/>
+                <MainPage logout={this.logout} username={this.state.username}/>
             
     
             )
