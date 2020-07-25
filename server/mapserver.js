@@ -142,6 +142,27 @@ app.get('/api/loggedin', (req, res) => {
     }
 })
 
+
+app.post('/api/createaccount', (req,res)=>{
+    let data = req.body
+    console.log('inside create account')
+    console.log(data)
+
+    let new_user = new User(data)
+
+    new_user.save(e=>{
+        if(e){
+            return res.json({
+                success: false
+            })
+        }
+
+        return res.json({
+            success: true
+        })
+    })
+})
+
 app.get('/api/logout', user_authenticate_mw, (req, res)=>{
 
     console.log('inside logout')
