@@ -102,7 +102,9 @@ class RegisterPage extends React.Component {
             }),
             headers: {
                 'Content-Type': 'application/json'
-            }
+            },
+            withCredentials: true,
+            credentials: 'include'
         }).then(d => d.json()).then(d => {
             if (d.success) {
                 // force data list update

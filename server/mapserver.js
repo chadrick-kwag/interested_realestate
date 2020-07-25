@@ -121,17 +121,6 @@ passport.deserializeUser((id, done) => {
         done(null, user)
     })
 
-    // console.log("inside deserializeuser")
-    // for (let i = 0; i < user_list.length; i++) {
-    //     let sel_user = user_list[i]
-
-    //     if (id == sel_user.username) {
-    //         done(null, sel_user)
-    //         return
-    //     }
-    // }
-
-    // done(null, false)
 
 })
 
@@ -198,6 +187,8 @@ app.post('/api/realestate/create', user_authenticate_mw, (req, res) => {
 
     let update_data = data
     update_data['userid'] = req.user._id
+
+    console.log(update_data)
 
     let new_instance = new RealEstate(update_data)
 
