@@ -142,6 +142,17 @@ app.get('/api/loggedin', (req, res) => {
     }
 })
 
+app.get('/api/logout', user_authenticate_mw, (req, res)=>{
+
+    console.log('inside logout')
+    req.logout()
+    // res.redirect('/')
+
+    return res.json({
+        success: true
+    })
+})
+
 app.post('/api/login', function (req, res, next) {
 
     console.log(req.body)

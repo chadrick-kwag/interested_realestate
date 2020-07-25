@@ -1,8 +1,8 @@
 import React from 'react'
 import {withRouter} from 'react-router'
 import {Button} from 'react-bootstrap'
-import location_img from '../public/location.png'
-import list_img from '../public/menu.png'
+import location_img from '../../public/location.png'
+import list_img from '../../public/menu.png'
 
 class TopNavBar extends React.Component {
 
@@ -14,8 +14,13 @@ class TopNavBar extends React.Component {
             
             <div style={{
                 display: 'flex',
-                flexDirection: "row"
+                flexDirection: "row",
+                justifyContent: "space-between"
             }}>
+                <div style={{
+                    display: 'flex',
+                    flexDirection: "row"
+                }}>
 
                 <Button onClick={e=>this.props.history.push('/register')}>매물추가</Button>
                 <div style={{
@@ -28,6 +33,15 @@ class TopNavBar extends React.Component {
                 }} 
                 onClick={e=>this.props.toggleCallback()}
                 />
+                </div>
+
+                <div style={{
+                    display: "flex",
+                    flexDirection: "row"
+                }}>
+                    <Button onClick={e=>this.props.logout()}>로그아웃</Button>
+                </div>
+
 
             </div>
         )

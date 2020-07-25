@@ -29,11 +29,33 @@ class App extends React.Component {
         
         this.updateUserProfile = this.updateUserProfile.bind(this)
         this.checkloginstatus = this.checkloginstatus.bind(this)
+        this.logout = this.logout.bind(this)
     }
 
     componentDidMount() {
 
         this.checkloginstatus()
+    }
+
+    logout(){
+        fetch('http://localhost:3000/api/logout', {
+            withCredentials: true,
+            credentials: 'include'
+        }).then(d=>d.json())
+        .then(d=>{
+            console.log(d)
+            if(d.success){
+                this.setState({
+                    username: null
+                })
+                return
+            }
+
+            console.log('logout failed')
+        })
+        .catch(e=>{
+            console.log('error logout call')
+        })
     }
 
     
@@ -72,7 +94,7 @@ class App extends React.Component {
         if(this.state.username!=null){
             return (
 
-                <MainPage />
+                <MainPage logout={this.logout}/>
             
     
             )

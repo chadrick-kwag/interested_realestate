@@ -1,7 +1,7 @@
 import React from 'react'
 
 import ListView from '../ListView'
-import TopNavBar from '../TopNavBar'
+import TopNavBar from './TopNavBar'
 import MapView from '../MapView'
 import RegisterPage from '../registerpage/RegisterPage'
 import DetailViewPage from '../detaeilviewpage/DetailViewPage'
@@ -184,7 +184,7 @@ class MainPage extends React.Component{
 
         return <BrowserRouter>
         <div>
-            <TopNavBar viewmode={this.state.viewmode} toggleCallback={this.toggleViewMode} />
+            <TopNavBar viewmode={this.state.viewmode} toggleCallback={this.toggleViewMode} logout={this.props.logout} />
             <Switch>
                 <Route path='/register'>
                     <RegisterPage submitCallback={this.fetch_data} />
