@@ -11,7 +11,11 @@ class CreateUserBox extends React.Component{
         this.state = {
             username: "",
             password: "",
-            re_password: ""
+            re_password: "",
+            username_fb : null,
+            password_fb : null,
+            re_password_fb : null
+
         }
 
         this.createAccount = this.createAccount.bind(this)
@@ -90,6 +94,18 @@ class CreateUserBox extends React.Component{
                 return this.props.displaymode('login')
             }
 
+            // failed
+            // if failed due to username taken, handle it
+
+            if(data.errtarget == "username"){
+                console.log("setting username_fb " + data.msg)
+                return this.setState({
+                    username_fb: data.msg
+                })
+            }
+
+            alert("failed to create user due to server problems")
+
             console.log('failed create confirmation from server')
         })
         .catch(e=>{
@@ -110,6 +126,7 @@ class CreateUserBox extends React.Component{
                 <Form.Control value={this.state.username} onChange={e=>this.setState({
                     username: e.target.value
                 })}></Form.Control>
+                {this.state.username_fb!=null? <span className="fb-danger">{this.state.username_fb}</span> : null}
             </div>
             <div>
                 <span>password</span>

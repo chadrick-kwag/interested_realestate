@@ -36,7 +36,7 @@ let user_schema = new Schema({
     username: String,
     password: String
 })
- 
+
 let RealEstate = mongoose.model('col1', modelschema)
 let User = mongoose.model('users', user_schema)
 
@@ -55,13 +55,13 @@ app.use(bodyparser.json())
 app.use(passport.initialize())
 app.use(passport.session())
 
-var user_authenticate_mw = (req,res,next)=>{
-    if(req.user){
+var user_authenticate_mw = (req, res, next) => {
+    if (req.user) {
         return next()
     }
 
-    return res.status(500).send({ error: "user not authenticated"})
-    
+    return res.status(500).send({ error: "user not authenticated" })
+
 }
 
 
@@ -78,21 +78,21 @@ passport.use(new LocalStrategy({
 
     User.findOne({
         username: username
-    }, (err, user)=>{
+    }, (err, user) => {
 
         console.log('found user')
         console.log(user)
-        if(err){
+        if (err) {
             return done(err)
         }
-        
-        if(!user){
-            return done(null, false, {msg: "incorrect username"})
+
+        if (!user) {
+            return done(null, false, { msg: "incorrect username" })
         }
 
         // validate password
-        if(password!==user.password){
-            return done(null, false, {msg: "incorrect password"})
+        if (password !== user.password) {
+            return done(null, false, { msg: "incorrect password" })
         }
 
         return done(null, user)
@@ -102,19 +102,19 @@ passport.use(new LocalStrategy({
 
 passport.serializeUser((user, done) => {
     console.log('serializer')
-    console.log(user)   
+    console.log(user)
     done(null, user._id)
 })
 
 passport.deserializeUser((id, done) => {
 
 
-    User.findOne({_id: id}, (err, user)=>{
-        if(err){
+    User.findOne({ _id: id }, (err, user) => {
+        if (err) {
             return done(err)
         }
 
-        if(!user){
+        if (!user) {
             return done(null, false)
         }
 
@@ -143,27 +143,55 @@ app.get('/api/loggedin', (req, res) => {
 })
 
 
-app.post('/api/createaccount', (req,res)=>{
+app.post('/api/createaccount', (req, res) => {
     let data = req.body
     console.log('inside create account')
     console.log(data)
 
-    let new_user = new User(data)
+    // check if username is not duplicate
 
-    new_user.save(e=>{
-        if(e){
+    User.findOne({
+        username: data.username
+    }, (err, user)=>{
+        if (err) {
             return res.json({
-                success: false
+                success: false,
+                errtarget: null,
+                msg: "db error finding duplicate user"
             })
         }
 
-        return res.json({
-            success: true
-        })
+        if (user) {
+            // username taken
+            return res.json({
+                success: false,
+                errtarget: "username",
+                msg: "username taken"
+            })
+        }
+        else{
+            // no user found
+            let new_user = new User(data)
+
+            new_user.save(e => {
+                if (e) {
+                    return res.json({
+                        success: false,
+                        errtarget: null,
+                        msg: "failed to create user account in db"
+                    })
+                }
+
+                return res.json({
+                    success: true
+                })
+            })
+        }
     })
+
 })
 
-app.get('/api/logout', user_authenticate_mw, (req, res)=>{
+app.get('/api/logout', user_authenticate_mw, (req, res) => {
 
     console.log('inside logout')
     req.logout()
@@ -251,7 +279,7 @@ app.post('/api/realestate/create', user_authenticate_mw, (req, res) => {
 app.get('/api/realestate/fetch', user_authenticate_mw, (req, res) => {
 
     let userid = req.user._id
-    RealEstate.find({userid: userid}, (err, results) => {
+    RealEstate.find({ userid: userid }, (err, results) => {
         if (err) {
             res.json({
                 success: false
